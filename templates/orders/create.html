@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Checkout - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold">
+                    <i class="bi bi-clipboard-check me-2 text-primary"></i>Checkout
+                </h1>
+                <p class="text-muted">Review your order and provide delivery details</p>
+            </div>
+            
+            <div class="row g-5">
+                <!-- Order Form -->
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-truck me-2"></i>Delivery Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                
+                                <div class="d-grid gap-2 mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-arrow-right me-2"></i>Continue to Payment
+                                    </button>
+                                    <a href="{% url 'orders:cart' %}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-arrow-left me-2"></i>Back to Cart
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if cart_items %}
+                                <!-- Restaurant Info -->
+                                {% with first_item=cart_items.0 %}
+                                <div class="d-flex align-items-center mb-4 p-3 bg-light rounded">
+                                    {% if first_item.meal.restaurant.logo %}
+                                    <img src="{{ first_item.meal.restaurant.logo.url }}" class="rounded-circle me-3" width="50" height="50" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-shop"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-1">{{ first_item.meal.restaurant.name }}</h6>
+                                        <small class="text-muted">{{ cart_items|length }} item{{ cart_items|length|pluralize }}</small>
+                                    </div>
+                                </div>
+                                {% endwith %}
+                                
+                                <!-- Cart Items -->
+                                <div class="mb-4">
+                                    {% for item in cart_items %}
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="d-flex align-items-center">
+                                            {% if item.meal.image %}
+                                            <img src="{{ item.meal.image.url }}" class="rounded me-3" width="40" height="40" style="object-fit: cover;">
+                                            {% else %}
+                                            <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-image text-muted small"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0 small">{{ item.quantity }}x {{ item.meal.name }}</h6>
+                                                <small class="text-muted">${{ item.meal.price }} each</small>
+                                            </div>
+                                        </div>
+                                        <span class="fw-bold">${{ item.total }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <hr>
+                                
+                                <!-- Cost Breakdown -->
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal:</span>
+                                    <span>${{ total }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Delivery Fee:</span>
+                                    <span>$3.99</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tax (8%):</span>
+                                    <span id="order-tax-amount">$0.00</span>
+                                </div>
+                                
+                                <hr>
+                                
+                                <div class="d-flex justify-content-between fw-bold fs-5">
+                                    <span>Total:</span>
+                                    <span class="text-primary" id="order-final-total">$0.00</span>
+                                </div>
+                                
+                                <!-- Estimated Delivery -->
+                                <div class="mt-4 p-3 bg-success bg-opacity-10 rounded">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-clock text-success me-2"></i>
+                                        <div>
+                                            <small class="fw-bold text-success">Estimated Delivery</small>
+                                            <div class="small text-muted">30-45 minutes after payment</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="bi bi-cart-x display-4 text-muted"></i>
+                                    <p class="text-muted mt-3">Your cart is empty</p>
+                                    <a href="{% url 'core:search' %}" class="btn btn-primary">Browse Meals</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Security Badge -->
+                    <div class="text-center mt-4">
+                        <div class="d-inline-flex align-items-center p-3 bg-success bg-opacity-10 rounded">
+                            <i class="bi bi-shield-check text-success me-2"></i>
+                            <div class="text-start">
+                                <div class="small fw-bold text-success">Secure Checkout</div>
+                                <div class="small text-muted">Powered by Stripe</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Calculate tax and total on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Find the subtotal element
+    const subtotalElements = document.querySelectorAll('.d-flex.justify-content-between.mb-2');
+    let subtotalElement = null;
+    
+    // Find the element that contains "Subtotal:"
+    for (let element of subtotalElements) {
+        if (element.textContent.includes('Subtotal:')) {
+            subtotalElement = element.querySelector('span:last-child');
+            break;
+        }
+    }
+    
+    if (subtotalElement) {
+        const subtotalText = subtotalElement.textContent.replace('$', '');
+        const subtotal = parseFloat(subtotalText) || 0;
+        const deliveryFee = 3.99;
+        const taxRate = 0.08;
+        
+        const subtotalWithDelivery = subtotal + deliveryFee;
+        const taxAmount = subtotalWithDelivery * taxRate;
+        const finalTotal = subtotalWithDelivery + taxAmount;
+        
+        // Update tax amount
+        const taxElement = document.getElementById('order-tax-amount');
+        if (taxElement) {
+            taxElement.textContent = '$' + taxAmount.toFixed(2);
+        }
+        
+        // Update final total
+        const totalElement = document.getElementById('order-final-total');
+        if (totalElement) {
+            totalElement.textContent = '$' + finalTotal.toFixed(2);
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Restaurant Dashboard - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    {% if needs_restaurant_profile %}
+    <!-- No Restaurant Profile -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <div class="card">
+                <div class="card-body py-5">
+                    <i class="bi bi-shop display-1 text-muted mb-4"></i>
+                    <h2 class="fw-bold mb-3">Welcome to Mobile Meals Center!</h2>
+                    <p class="lead text-muted mb-4">
+                        You need to create your restaurant profile before you can start managing your meals and orders.
+                    </p>
+                    <a href="{% url 'restaurants:create' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle me-2"></i>Create Restaurant Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Restaurant Dashboard -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center">
+                    {% if restaurant.logo %}
+                    <img src="{{ restaurant.logo.url }}" class="rounded-circle me-3" width="60" height="60" style="object-fit: cover;">
+                    {% else %}
+                    <div class="bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 60px; height: 60px;">
+                        <i class="bi bi-shop fs-4"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h1 class="fw-bold mb-1">{{ restaurant.name }}</h1>
+                        <p class="text-muted mb-0">Restaurant Dashboard</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'restaurants:edit' pk=restaurant.pk %}" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit Profile
+                    </a>
+                    <a href="{% url 'restaurants:detail' pk=restaurant.pk %}" class="btn btn-primary">
+                        <i class="bi bi-eye me-2"></i>View Public Page
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="bg-primary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-receipt text-primary fs-4"></i>
+                            </div>
+                            <h3 class="fw-bold text-primary">{{ total_orders }}</h3>
+                            <p class="text-muted mb-0">Total Orders</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="bg-warning bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-clock text-warning fs-4"></i>
+                            </div>
+                            <h3 class="fw-bold text-warning">{{ pending_orders }}</h3>
+                            <p class="text-muted mb-0">Pending Orders</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="bg-success bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-card-list text-success fs-4"></i>
+                            </div>
+                            <h3 class="fw-bold text-success">{{ total_meals }}</h3>
+                            <p class="text-muted mb-0">Active Meals</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="bg-info bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-star text-info fs-4"></i>
+                            </div>
+                            <h3 class="fw-bold text-info">4.5</h3>
+                            <p class="text-muted mb-0">Average Rating</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'meals:create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Add New Meal
+                        </a>
+                        <a href="{% url 'meals:list' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-card-list me-2"></i>Manage Meals
+                        </a>
+                        <a href="{% url 'orders:list' %}" class="btn btn-outline-success">
+                            <i class="bi bi-receipt me-2"></i>View Orders
+                        </a>
+                        <a href="{% url 'restaurants:edit' pk=restaurant.pk %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-gear me-2"></i>Restaurant Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Restaurant Info -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Restaurant Info
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Address:</strong>
+                        <p class="text-muted mb-0">{{ restaurant.address|default:"Not specified" }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Phone:</strong>
+                        <p class="text-muted mb-0">{{ restaurant.phone|default:"Not specified" }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Status:</strong>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                    <div>
+                        <strong>Joined:</strong>
+                        <p class="text-muted mb-0">{{ restaurant.created_at|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Orders -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>Recent Orders
+                    </h5>
+                    <a href="{% url 'orders:list' %}" class="btn btn-outline-primary btn-sm">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'orders:detail' pk=order.pk %}" class="text-decoration-none">
+                                            #{{ order.order_number }}
+                                        </a>
+                                    </td>
+                                    <td>{{ order.customer.get_full_name|default:order.customer.username }}</td>
+                                    <td>{{ order.items.count }} item{{ order.items.count|pluralize }}</td>
+                                    <td class="fw-bold">${{ order.total }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if order.status == 'pending' %}bg-warning
+                                            {% elif order.status == 'confirmed' %}bg-info
+                                            {% elif order.status == 'preparing' %}bg-primary
+                                            {% elif order.status == 'ready' %}bg-success
+                                            {% elif order.status == 'delivered' %}bg-success
+                                            {% else %}bg-danger
+                                            {% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.created_at|date:"M d, g:i A" }}</td>
+                                    <td>
+                                        {% if order.status == 'pending' %}
+                                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus('{{ order.pk }}', 'confirmed')">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                        {% elif order.status == 'confirmed' %}
+                                        <button class="btn btn-sm btn-primary" onclick="updateOrderStatus('{{ order.pk }}', 'preparing')">
+                                            <i class="bi bi-clock"></i>
+                                        </button>
+                                        {% elif order.status == 'preparing' %}
+                                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus('{{ order.pk }}', 'ready')">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-receipt display-4 text-muted"></i>
+                        <h5 class="text-muted mt-3">No orders yet</h5>
+                        <p class="text-muted">Orders will appear here when customers start ordering from your restaurant.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Meals -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-card-list me-2"></i>Your Meals
+                    </h5>
+                    <a href="{% url 'meals:create' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-plus me-1"></i>Add Meal
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if meals %}
+                    <div class="row g-3">
+                        {% for meal in meals %}
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                {% if meal.image %}
+                                <img src="{{ meal.image.url }}" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
+                                {% else %}
+                                <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <div class="flex-fill">
+                                    <h6 class="mb-1">{{ meal.name }}</h6>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted small">${{ meal.price }}</span>
+                                        <span class="badge {% if meal.is_available %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {% if meal.is_available %}Available{% else %}Unavailable{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'meals:list' %}" class="btn btn-outline-primary btn-sm">
+                            View All Meals <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-card-list display-4 text-muted"></i>
+                        <h5 class="text-muted mt-3">No meals added yet</h5>
+                        <p class="text-muted mb-3">Start by adding your first meal to attract customers.</p>
+                        <a href="{% url 'meals:create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Add Your First Meal
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function updateOrderStatus(orderId, status) {
+    if (confirm('Are you sure you want to update this order status?')) {
+        // This would typically make an AJAX call to update the order status
+        // For now, we'll redirect to the order detail page
+        window.location.href = `/orders/${orderId}/`;
+    }
+}
+</script>
+{% endblock %}

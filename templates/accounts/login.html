@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Login - Mobile Meals Center{% endblock %}
+
+{% block extra_css %}
+<style>
+.login-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="300" cy="700" r="120" fill="url(%23a)"/><circle cx="700" cy="800" r="80" fill="url(%23a)"/></svg>') no-repeat center center;
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    position: relative;
+    z-index: 1;
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.login-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+    }
+}
+
+.form-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating input {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-floating input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.15);
+    background: white;
+}
+
+.form-floating .form-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 5;
+    transition: color 0.3s ease;
+}
+
+.form-floating input:focus + .form-icon {
+    color: var(--primary-color);
+}
+
+.form-floating label {
+    position: absolute;
+    top: 50%;
+    left: 3rem;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background: transparent;
+    padding: 0 0.5rem;
+}
+
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label {
+    top: 0;
+    left: 2.5rem;
+    transform: translateY(-50%) scale(0.85);
+    color: var(--primary-color);
+    background: white;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+}
+
+.divider span {
+    background: white;
+    padding: 0 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.social-login {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: white;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.social-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.features-list {
+    background: rgba(255, 107, 53, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.feature-item:last-child {
+    margin-bottom: 0;
+}
+
+.feature-icon {
+    width: 24px;
+    height: 24px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    z-index: 5;
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-sm-9">
+                <div class="login-card p-4 p-md-5">
+                    <!-- Header -->
+                    <div class="login-header text-center">
+                        <div class="login-icon">
+                            <i class="bi bi-shop text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h1 class="fw-bold mb-2">Welcome Back!</h1>
+                        <p class="text-muted mb-0">Sign in to access your Mobile Meals Center account</p>
+                    </div>
+                    
+                    <!-- Login Form -->
+                    <form method="post" id="loginForm">
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="form-floating">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="{{ form.username.id_for_label }}" 
+                                   name="{{ form.username.name }}"
+                                   placeholder="Username"
+                                   value="{{ form.username.value|default:'' }}"
+                                   required>
+                            <i class="bi bi-person form-icon"></i>
+                            <label for="{{ form.username.id_for_label }}">Username or Email</label>
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password Field -->
+                        <div class="form-floating">
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="{{ form.password.id_for_label }}" 
+                                   name="{{ form.password.name }}"
+                                   placeholder="Password"
+                                   required>
+                            <i class="bi bi-lock form-icon"></i>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <i class="bi bi-eye" id="passwordToggleIcon"></i>
+                            </button>
+                            <label for="{{ form.password.id_for_label }}">Password</label>
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.password.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label text-muted" for="rememberMe">
+                                    Remember me
+                                </label>
+                            </div>
+                            <a href="#" class="text-primary text-decoration-none small">
+                                Forgot password?
+                            </a>
+                        </div>
+                        
+                        <!-- Error Messages -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger d-flex align-items-center mb-4">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <div>{{ form.non_field_errors.0 }}</div>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Login Button -->
+                        <button type="submit" class="btn login-btn text-white w-100 mb-4">
+                            <span class="d-flex align-items-center justify-content-center">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                <span>Sign In</span>
+                                <div class="spinner-border spinner-border-sm ms-2 d-none" id="loginSpinner"></div>
+                            </span>
+                        </button>
+                        
+                        <!-- Divider -->
+                        <div class="divider">
+                            <span>or continue with</span>
+                        </div>
+                        
+                        <!-- Social Login -->
+                        <div class="social-login">
+                            <a href="#" class="social-btn">
+                                <i class="bi bi-google"></i>
+                                <span>Google</span>
+                            </a>
+                            <a href="#" class="social-btn">
+                                <i class="bi bi-facebook"></i>
+                                <span>Facebook</span>
+                            </a>
+                        </div>
+                        
+                        <!-- Sign Up Link -->
+                        <div class="text-center">
+                            <p class="mb-0 text-muted">
+                                Don't have an account? 
+                                <a href="{% url 'accounts:register' %}" class="text-primary text-decoration-none fw-bold">
+                                    Create one here
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Features -->
+                <div class="features-list mt-4">
+                    <h6 class="fw-bold mb-3 text-center">
+                        <i class="bi bi-star me-2"></i>Why Choose Mobile Meals Center?
+                    </h6>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-lightning"></i>
+                        </div>
+                        <span class="small text-muted">Fast delivery from local restaurants</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <span class="small text-muted">Secure payments with Stripe & M-Pesa</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-heart"></i>
+                        </div>
+                        <span class="small text-muted">Support local businesses in your area</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('{{ form.password.id_for_label }}');
+    const toggleIcon = document.getElementById('passwordToggleIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.className = 'bi bi-eye-slash';
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.className = 'bi bi-eye';
+    }
+}
+
+// Form submission with loading state
+document.getElementById('loginForm').addEventListener('submit', function() {
+    const spinner = document.getElementById('loginSpinner');
+    const button = this.querySelector('button[type="submit"]');
+    
+    spinner.classList.remove('d-none');
+    button.disabled = true;
+});
+
+// Auto-focus first input
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('{{ form.username.id_for_label }}').focus();
+});
+</script>
+{% endblock %}

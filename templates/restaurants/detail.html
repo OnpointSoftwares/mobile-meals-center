@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ restaurant.name }} - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<!-- Restaurant Header -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    {% if restaurant.logo %}
+                    <img src="{{ restaurant.logo.url }}" class="rounded-circle me-4" width="100" height="100" style="object-fit: cover;">
+                    {% else %}
+                    <div class="bg-primary rounded-circle me-4 d-flex align-items-center justify-content-center text-white" style="width: 100px; height: 100px;">
+                        <i class="bi bi-shop" style="font-size: 2rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h1 class="fw-bold mb-2">{{ restaurant.name }}</h1>
+                        <p class="text-muted mb-2">{{ restaurant.description }}</p>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-geo-alt text-muted me-2"></i>
+                            <span class="text-muted">{{ restaurant.address }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mt-1">
+                            <i class="bi bi-telephone text-muted me-2"></i>
+                            <span class="text-muted">{{ restaurant.phone }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-flex flex-column align-items-md-end">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="text-warning me-2">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                        </div>
+                        <span class="fw-bold">4.5</span>
+                        <span class="text-muted ms-1">(124 reviews)</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clock text-muted me-2"></i>
+                        <span class="text-muted">30-45 min delivery</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold">Our Menu</h2>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                        {% regroup meals by category as category_list %}
+                        {% for category_group in category_list %}
+                            {% if category_group.grouper %}
+                            <button type="button" class="btn btn-outline-primary" data-filter="{{ category_group.grouper.name|lower }}">
+                                {{ category_group.grouper.name }}
+                            </button>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if meals %}
+            <div class="row g-4" id="meals-container">
+                {% for meal in meals %}
+                <div class="col-md-6 col-lg-4 meal-item" data-category="{% if meal.category %}{{ meal.category.name|lower }}{% else %}other{% endif %}">
+                    <div class="card meal-card h-100">
+                        {% if meal.image %}
+                        <img src="{{ meal.image.url }}" class="card-img-top" alt="{{ meal.name }}">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="price-badge">${{ meal.price }}</div>
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ meal.name }}</h5>
+                            <p class="card-text text-muted flex-grow-1">{{ meal.description|truncatewords:20 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>{{ meal.preparation_time }} min
+                                </small>
+                                {% if meal.category %}
+                                <span class="badge bg-light text-dark">{{ meal.category.name }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if meal.is_available %}
+                                    {% if user.is_authenticated and user.is_customer %}
+                                    <form method="post" action="{% url 'orders:add_to_cart' meal.id %}" class="flex-grow-1">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <a href="{{ meal.get_absolute_url }}" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-eye me-1"></i>View Details
+                                    </a>
+                                    {% endif %}
+                                {% else %}
+                                <button class="btn btn-secondary w-100" disabled>
+                                    <i class="bi bi-x-circle me-1"></i>Not Available
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-cup display-1 text-muted"></i>
+                <h4 class="mt-4">No meals available</h4>
+                <p class="text-muted">This restaurant hasn't added any meals to their menu yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Menu filter functionality
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const mealItems = document.querySelectorAll('.meal-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter meals
+            mealItems.forEach(item => {
+                if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                    item.style.display = 'block';
+                    item.classList.add('fade-in-up');
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

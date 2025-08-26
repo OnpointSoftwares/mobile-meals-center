@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.order_number }} - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold">Order #{{ order.order_number }}</h1>
+                    <p class="text-muted mb-0">Placed on {{ order.created_at|date:"F d, Y \a\t g:i A" }}</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge fs-6 
+                        {% if order.status == 'pending' %}bg-warning
+                        {% elif order.status == 'confirmed' %}bg-info
+                        {% elif order.status == 'preparing' %}bg-primary
+                        {% elif order.status == 'ready' %}bg-success
+                        {% elif order.status == 'delivered' %}bg-success
+                        {% else %}bg-danger
+                        {% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Order Details -->
+                <div class="col-lg-8">
+                    <!-- Restaurant Info -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Restaurant</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                {% if order.restaurant.logo %}
+                                <img src="{{ order.restaurant.logo.url }}" class="rounded-circle me-3" width="60" height="60" style="object-fit: cover;">
+                                {% else %}
+                                <div class="bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 60px; height: 60px;">
+                                    <i class="bi bi-shop fs-4"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <h5 class="mb-1">{{ order.restaurant.name }}</h5>
+                                    <p class="text-muted mb-1">{{ order.restaurant.description|truncatechars:100 }}</p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ order.restaurant.address }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Items -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-bag me-2"></i>Order Items</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for item in order.items.all %}
+                            <div class="d-flex align-items-center justify-content-between mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                                <div class="d-flex align-items-center">
+                                    {% if item.meal.image %}
+                                    <img src="{{ item.meal.image.url }}" class="rounded me-3" width="60" height="60" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-1">{{ item.meal.name }}</h6>
+                                        <p class="text-muted small mb-1">{{ item.meal.description|truncatechars:80 }}</p>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-light text-dark me-2">Qty: {{ item.quantity }}</span>
+                                            <span class="small text-muted">${{ item.meal.price }} each</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-0">${{ item.total }}</h6>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Order Status Timeline -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Order Timeline</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item {% if order.status != 'cancelled' %}completed{% endif %}">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Order Placed</h6>
+                                        <small class="text-muted">{{ order.created_at|date:"M d, Y g:i A" }}</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item {% if order.status in 'confirmed,preparing,ready,delivered' %}completed{% endif %}">
+                                    <div class="timeline-marker {% if order.status in 'confirmed,preparing,ready,delivered' %}bg-success{% else %}bg-light{% endif %}"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Order Confirmed</h6>
+                                        <small class="text-muted">
+                                            {% if order.status in 'confirmed,preparing,ready,delivered' %}
+                                                Restaurant confirmed your order
+                                            {% else %}
+                                                Waiting for restaurant confirmation
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item {% if order.status in 'preparing,ready,delivered' %}completed{% endif %}">
+                                    <div class="timeline-marker {% if order.status in 'preparing,ready,delivered' %}bg-success{% else %}bg-light{% endif %}"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Preparing</h6>
+                                        <small class="text-muted">
+                                            {% if order.status in 'preparing,ready,delivered' %}
+                                                Your food is being prepared
+                                            {% else %}
+                                                Will start preparing soon
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item {% if order.status in 'ready,delivered' %}completed{% endif %}">
+                                    <div class="timeline-marker {% if order.status in 'ready,delivered' %}bg-success{% else %}bg-light{% endif %}"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Ready</h6>
+                                        <small class="text-muted">
+                                            {% if order.status in 'ready,delivered' %}
+                                                Your order is ready for pickup/delivery
+                                            {% else %}
+                                                Will be ready soon
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item {% if order.status == 'delivered' %}completed{% endif %}">
+                                    <div class="timeline-marker {% if order.status == 'delivered' %}bg-success{% else %}bg-light{% endif %}"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Delivered</h6>
+                                        <small class="text-muted">
+                                            {% if order.status == 'delivered' %}
+                                                Order delivered successfully!
+                                            {% else %}
+                                                On the way to you
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <!-- Order Summary Card -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>${{ order.total }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Delivery Fee:</span>
+                                <span>$3.99</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax:</span>
+                                <span>${{ order.total|add:"3.99"|mul:0.08|floatformat:2 }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                                <span>Total:</span>
+                                <span class="text-primary">${{ order.total|add:"3.99"|mul:1.08|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Delivery Info -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-truck me-2"></i>Delivery Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Delivery Address:</strong>
+                                <p class="mb-0">{{ order.delivery_address }}</p>
+                            </div>
+                            {% if order.special_instructions %}
+                            <div class="mb-3">
+                                <strong>Special Instructions:</strong>
+                                <p class="mb-0">{{ order.special_instructions }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="mb-3">
+                                <strong>Phone:</strong>
+                                <p class="mb-0">{{ order.customer.phone|default:"Not provided" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Info -->
+                    {% if order.payments.exists %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Payment</h5>
+                        </div>
+                        <div class="card-body">
+                            {% with payment=order.payments.first %}
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <div>
+                                    <strong>Payment Successful</strong>
+                                    <p class="mb-0 small text-muted">
+                                        {{ payment.payment_method|title }} ending in ****
+                                        <br>Paid on {{ payment.paid_at|date:"M d, Y g:i A" }}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endwith %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Actions -->
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'orders:list' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Orders
+                        </a>
+                        {% if order.status == 'delivered' %}
+                        <button class="btn btn-primary" onclick="reorderItems()">
+                            <i class="bi bi-arrow-repeat me-2"></i>Reorder
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -37px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e9ecef;
+}
+
+.timeline-item.completed .timeline-marker {
+    box-shadow: 0 0 0 2px #198754;
+}
+
+.timeline-content h6 {
+    margin-bottom: 5px;
+}
+</style>
+
+<script>
+function reorderItems() {
+    alert('Reorder functionality would be implemented here');
+}
+</script>
+{% endblock %}

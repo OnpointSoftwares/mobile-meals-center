@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content fade-in-up">
+                    <h1 class="display-4 fw-bold mb-4">Delicious Meals Delivered to Your Door</h1>
+                    <p class="lead mb-4">Discover amazing local restaurants and order your favorite meals with just a few clicks.</p>
+                    
+                    <!-- Search Form -->
+                    <form method="GET" action="{% url 'core:search' %}" class="d-flex mb-4">
+                        <div class="input-group input-group-lg">
+                            <input type="text" name="q" class="form-control" placeholder="Search for meals or restaurants..." 
+                                   value="{{ request.GET.q }}">
+                            <button class="btn btn-warning" type="submit">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="d-flex gap-3">
+                        <a href="{% url 'core:search' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-grid me-2"></i>Browse All Meals
+                        </a>
+                        {% if not user.is_authenticated %}
+                        <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-shop me-2"></i>Join as Restaurant
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <img src="{% static 'images/hero-food.png' %}" alt="Delicious Food" class="img-fluid" 
+                         style="max-height: 400px;" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+{% if categories %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Popular Categories</h2>
+            <p class="text-muted">Explore meals by category</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for category in categories %}
+            <div class="col-md-4 col-lg-2">
+                <a href="{% url 'core:search' %}?category={{ category.id }}" class="text-decoration-none">
+                    <div class="card h-100 text-center category-card">
+                        <div class="card-body">
+                            <i class="bi bi-cup-hot display-4 text-primary mb-3"></i>
+                            <h6 class="card-title">{{ category.name }}</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Meals Section -->
+{% if featured_meals %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Featured Meals</h2>
+            <p class="text-muted">Handpicked delicious meals from our partner restaurants</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for meal in featured_meals %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card meal-card h-100">
+                    {% if meal.image %}
+                    <img src="{{ meal.image.url }}" class="card-img-top" alt="{{ meal.name }}">
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="price-badge">${{ meal.price }}</div>
+                    
+                    <div class="card-body">
+                        <h6 class="card-title">{{ meal.name }}</h6>
+                        <p class="card-text text-muted small">{{ meal.description|truncatewords:15 }}</p>
+                        <p class="text-primary small mb-2">
+                            <i class="bi bi-shop me-1"></i>{{ meal.restaurant.name }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>{{ meal.preparation_time }} min
+                            </small>
+                            <a href="{{ meal.get_absolute_url }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-circle me-1"></i>Add to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{% url 'core:search' %}" class="btn btn-primary btn-lg">
+                View All Meals <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Restaurants Section -->
+{% if restaurants %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Popular Restaurants</h2>
+            <p class="text-muted">Discover amazing local restaurants</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for restaurant in restaurants %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card restaurant-card h-100">
+                    <div class="position-relative">
+                        {% if restaurant.logo %}
+                        <img src="{{ restaurant.logo.url }}" class="card-img-top" alt="{{ restaurant.name }}">
+                        <img src="{{ restaurant.logo.url }}" class="restaurant-logo" alt="{{ restaurant.name }}">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-shop text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="restaurant-logo bg-primary d-flex align-items-center justify-content-center text-white">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body pt-4">
+                        <h5 class="card-title">{{ restaurant.name }}</h5>
+                        <p class="card-text text-muted">{{ restaurant.description|truncatewords:20 }}</p>
+                        <p class="text-muted small">
+                            <i class="bi bi-geo-alt me-1"></i>{{ restaurant.address|truncatewords:5 }}
+                        </p>
+                        <a href="{{ restaurant.get_absolute_url }}" class="btn btn-outline-primary">
+                            <i class="bi bi-eye me-1"></i>View Menu
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-4">Ready to Start Ordering?</h2>
+                <p class="lead mb-4">Join thousands of satisfied customers who trust Mobile Meals for their food delivery needs.</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:register' %}?user_type=customer" class="btn btn-warning btn-lg">
+                        <i class="bi bi-person-plus me-2"></i>Sign Up as Customer
+                    </a>
+                    <a href="{% url 'accounts:register' %}?user_type=restaurant" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-shop me-2"></i>Join as Restaurant
+                    </a>
+                    {% else %}
+                    <a href="{% url 'core:search' %}" class="btn btn-warning btn-lg">
+                        <i class="bi bi-search me-2"></i>Start Browsing Meals
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

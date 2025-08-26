@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="fw-bold mb-4">
+                <i class="bi bi-cart3 me-2 text-primary"></i>Shopping Cart
+            </h1>
+        </div>
+    </div>
+    
+    {% if cart_items %}
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Cart Items</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% for item in cart_items %}
+                        <div class="d-flex align-items-center p-4 border-bottom">
+                            {% if item.meal.image %}
+                            <img src="{{ item.meal.image.url }}" class="rounded me-3" width="80" height="80" style="object-fit: cover;">
+                            {% else %}
+                            <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ item.meal.name }}</h6>
+                                <p class="text-muted small mb-1">{{ item.meal.restaurant.name }}</p>
+                                <p class="text-muted small mb-0">{{ item.meal.description|truncatewords:15 }}</p>
+                            </div>
+                            
+                            <div class="text-center me-4">
+                                <div class="input-group input-group-sm" style="width: 120px;">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('{{ item.meal.id }}', -1)">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <input type="text" class="form-control text-center" value="{{ item.quantity }}" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('{{ item.meal.id }}', 1)">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="text-end me-3">
+                                <div class="fw-bold">${{ item.total }}</div>
+                                <small class="text-muted">${{ item.meal.price }} each</small>
+                            </div>
+                            
+                            <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart('{{ item.meal.id }}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span>${{ total|floatformat:2 }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Delivery Fee:</span>
+                            <span>$3.99</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax (8%):</span>
+                            <span id="tax-amount">$0.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Total:</span>
+                            <span id="final-total">$0.00</span>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <a href="{% url 'orders:create' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-shield-check me-2"></i>Secure Checkout
+                            </a>
+                            <a href="{% url 'core:search' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Delivery Info -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-truck me-2"></i>Delivery Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-clock text-muted me-2"></i>
+                            <small>Estimated delivery: 30-45 minutes</small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-geo-alt text-muted me-2"></i>
+                            <small>Delivery to: {{ user.address|default:"Your address" }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Security Info -->
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <i class="bi bi-shield-check me-1"></i>
+                        Secured by Stripe • SSL Encrypted • Safe & Secure
+                    </small>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-cart-x display-1 text-muted"></i>
+                    <h3 class="mt-4">Your cart is empty</h3>
+                    <p class="text-muted">Start adding some delicious meals to your cart!</p>
+                    <a href="{% url 'core:search' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search me-2"></i>Browse Meals
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateQuantity(mealId, change) {
+    // This would typically make an AJAX call to update the cart
+    // For now, we'll just reload the page
+    console.log('Update quantity for meal', mealId, 'by', change);
+    // Implementation would go here
+}
+
+function removeFromCart(mealId) {
+    if (confirm('Remove this item from your cart?')) {
+        // This would typically make an AJAX call to remove the item
+        // For now, we'll just reload the page
+        console.log('Remove meal', mealId, 'from cart');
+        // Implementation would go here
+    }
+}
+
+// Calculate tax and total on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const subtotalElement = document.querySelector('.d-flex.justify-content-between.mb-2:first-child span:last-child');
+    if (subtotalElement) {
+        const subtotalText = subtotalElement.textContent.replace('$', '');
+        const subtotal = parseFloat(subtotalText) || 0;
+        const deliveryFee = 3.99;
+        const taxRate = 0.08;
+        
+        const subtotalWithDelivery = subtotal + deliveryFee;
+        const taxAmount = subtotalWithDelivery * taxRate;
+        const finalTotal = subtotalWithDelivery + taxAmount;
+        
+        // Update tax amount
+        const taxElement = document.getElementById('tax-amount');
+        if (taxElement) {
+            taxElement.textContent = '$' + taxAmount.toFixed(2);
+        }
+        
+        // Update final total
+        const totalElement = document.getElementById('final-total');
+        if (totalElement) {
+            totalElement.textContent = '$' + finalTotal.toFixed(2);
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+🍽️ ORDER CONFIRMED - Mobile Meals Center
+
+Hi {{ order.customer.first_name }}!
+
+Great news! Your order has been confirmed and is being prepared.
+
+📋 ORDER INFORMATION
+Order Number: {{ order.order_number }}
+Order Date: {{ order.created_at|date:"F d, Y \a\t g:i A" }}
+Status: {{ order.get_status_display }}
+Payment Method: {{ payment.get_payment_method_display }}
+
+🏪 RESTAURANT DETAILS
+{{ order.items.first.meal.restaurant.name }}
+{{ order.items.first.meal.restaurant.address }}
+Phone: {{ order.items.first.meal.restaurant.phone }}
+
+🛒 ORDER DETAILS
+{% for item in order.items.all %}{{ item.quantity }}x {{ item.meal.name }} - ${{ item.total }}
+{% endfor %}
+Subtotal: ${{ order.total_amount }}
+Delivery Fee: $3.99
+Tax (8%): ${{ tax_amount|floatformat:2 }}
+---
+TOTAL: ${{ total_amount|floatformat:2 }}
+
+🚚 DELIVERY INFORMATION
+Address: {{ order.delivery_address }}
+Phone: {{ order.phone }}
+Estimated Delivery: 30-45 minutes
+{% if payment.payment_method == 'cash_on_delivery' %}
+⚠️ Payment: Cash on delivery - Please have exact change ready
+{% endif %}
+
+WHAT'S NEXT?
+• Your order is being prepared by the restaurant
+• You'll receive updates as your order progresses
+• Our delivery partner will contact you when they're nearby
+• Enjoy your delicious meal! 🎉
+
+Track your order: http://127.0.0.1:8000/orders/{{ order.id }}/
+
+---
+Mobile Meals Center
+📧 support@mobilemeals.com | 📞 +254 700 123 456
+Thank you for choosing Mobile Meals Center!

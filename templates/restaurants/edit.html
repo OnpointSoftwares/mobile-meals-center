@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Edit {{ restaurant.name }} - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-4">
+                <div class="me-3">
+                    {% if restaurant.logo %}
+                    <img src="{{ restaurant.logo.url }}" class="rounded-circle" width="60" height="60" style="object-fit: cover;">
+                    {% else %}
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 60px; height: 60px;">
+                        <i class="bi bi-shop fs-4"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="fw-bold mb-1">Edit Restaurant Profile</h1>
+                    <p class="text-muted mb-0">Update your restaurant information and settings</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs mb-4" id="editTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab">
+                        <i class="bi bi-info-circle me-2"></i>Basic Information
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button" role="tab">
+                        <i class="bi bi-geo-alt me-2"></i>Location & Contact
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="media-tab" data-bs-toggle="tab" data-bs-target="#media" type="button" role="tab">
+                        <i class="bi bi-image me-2"></i>Logo & Media
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Form -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="tab-content" id="editTabContent">
+                    <!-- Basic Information Tab -->
+                    <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-shop me-2"></i>Restaurant Details
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        {{ form.name|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.phone|as_crispy_field }}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.description|as_crispy_field }}
+                                </div>
+                                
+                                <!-- Restaurant Stats -->
+                                <div class="row g-3 mt-3">
+                                    <div class="col-md-4">
+                                        <div class="bg-light rounded p-3 text-center">
+                                            <div class="fw-bold text-primary fs-4">{{ restaurant.meals.count }}</div>
+                                            <small class="text-muted">Total Meals</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="bg-light rounded p-3 text-center">
+                                            <div class="fw-bold text-success fs-4">{{ restaurant.orders.count }}</div>
+                                            <small class="text-muted">Total Orders</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="bg-light rounded p-3 text-center">
+                                            <div class="fw-bold text-info fs-4">4.5</div>
+                                            <small class="text-muted">Average Rating</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location & Contact Tab -->
+                    <div class="tab-pane fade" id="location" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-geo-alt me-2"></i>Location & Contact Information
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    {{ form.address|as_crispy_field }}
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        {{ form.latitude|as_crispy_field }}
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Current: {{ restaurant.latitude|default:"Not set" }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.longitude|as_crispy_field }}
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Current: {{ restaurant.longitude|default:"Not set" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#locationModal">
+                                        <i class="bi bi-question-circle me-1"></i>How to update coordinates?
+                                    </button>
+                                </div>
+                                
+                                <!-- Map Preview (if coordinates exist) -->
+                                {% if restaurant.latitude and restaurant.longitude %}
+                                <div class="mt-4">
+                                    <h6>Current Location Preview</h6>
+                                    <div class="bg-light rounded p-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-geo-alt text-primary me-2"></i>
+                                            <div>
+                                                <div class="fw-bold">{{ restaurant.address }}</div>
+                                                <small class="text-muted">{{ restaurant.latitude }}, {{ restaurant.longitude }}</small>
+                                            </div>
+                                            <div class="ms-auto">
+                                                <a href="https://www.google.com/maps?q={{ restaurant.latitude }},{{ restaurant.longitude }}" 
+                                                   target="_blank" class="btn btn-outline-primary btn-sm">
+                                                    <i class="bi bi-map me-1"></i>View on Maps
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Logo & Media Tab -->
+                    <div class="tab-pane fade" id="media" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-image me-2"></i>Restaurant Logo & Branding
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Current Logo -->
+                                {% if restaurant.logo %}
+                                <div class="mb-4">
+                                    <h6>Current Logo</h6>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ restaurant.logo.url }}" class="rounded me-3" width="100" height="100" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold">{{ restaurant.name }}</div>
+                                            <small class="text-muted">Current restaurant logo</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Logo Upload -->
+                                <div class="mb-3">
+                                    {{ form.logo|as_crispy_field }}
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        {% if restaurant.logo %}
+                                        Upload a new image to replace the current logo
+                                        {% else %}
+                                        Upload a high-quality logo for your restaurant
+                                        {% endif %}
+                                        (recommended: 400x400px, max 2MB)
+                                    </div>
+                                </div>
+                                
+                                <!-- Logo Guidelines -->
+                                <div class="alert alert-info">
+                                    <h6><i class="bi bi-lightbulb me-2"></i>Logo Guidelines:</h6>
+                                    <ul class="mb-0 small">
+                                        <li>Use a square format (1:1 ratio) for best results</li>
+                                        <li>Ensure your logo is clear and readable at small sizes</li>
+                                        <li>Use high contrast colors for better visibility</li>
+                                        <li>Avoid text-heavy logos - simple designs work best</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 justify-content-between mt-4">
+                    <a href="{% url 'restaurants:dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Cancel
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
+                            <i class="bi bi-trash me-2"></i>Delete Restaurant
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Location Helper Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="locationModalLabel">
+                    <i class="bi bi-geo-alt me-2"></i>How to Update Your Location Coordinates
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6>Step 1: Open Google Maps</h6>
+                        <p class="small text-muted">Go to <a href="https://maps.google.com" target="_blank">maps.google.com</a> and search for your restaurant location.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Step 2: Right-click on Location</h6>
+                        <p class="small text-muted">Right-click on your exact restaurant location on the map.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Step 3: Copy Coordinates</h6>
+                        <p class="small text-muted">Click on the coordinates that appear at the top of the context menu.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Step 4: Update Fields</h6>
+                        <p class="small text-muted">The first number is latitude, the second is longitude. Update the respective fields above.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Got it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Delete Restaurant
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ restaurant.name }}</strong>?</p>
+                <div class="alert alert-warning">
+                    <strong>Warning:</strong> This action cannot be undone. All your meals, orders, and data will be permanently deleted.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'restaurants:delete' pk=restaurant.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Delete Permanently
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete() {
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+</script>
+{% endblock %}

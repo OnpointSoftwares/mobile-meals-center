@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Register Your Restaurant - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <div class="mb-4">
+                    <i class="bi bi-shop display-4 text-primary"></i>
+                </div>
+                <h1 class="fw-bold mb-3">Register Your Restaurant</h1>
+                <p class="lead text-muted">
+                    Join Mobile Meals Center and start reaching thousands of hungry customers in your area
+                </p>
+            </div>
+            
+            <!-- Benefits Section -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-4 text-center">
+                    <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="bi bi-people text-primary fs-2"></i>
+                    </div>
+                    <h5>Reach More Customers</h5>
+                    <p class="text-muted small">Connect with food lovers in your area and expand your customer base</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="bi bi-graph-up text-success fs-2"></i>
+                    </div>
+                    <h5>Boost Sales</h5>
+                    <p class="text-muted small">Increase your revenue with our easy-to-use platform and marketing tools</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="bi bi-shield-check text-info fs-2"></i>
+                    </div>
+                    <h5>Secure Payments</h5>
+                    <p class="text-muted small">Get paid securely and on time with our integrated payment system</p>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-clipboard-data me-2"></i>Restaurant Information
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Basic Information -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.name|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.phone|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.description|as_crispy_field }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.address|as_crispy_field }}
+                        </div>
+                        
+                        <!-- Location -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.latitude|as_crispy_field }}
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    You can get coordinates from Google Maps
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.longitude|as_crispy_field }}
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Right-click on Google Maps and select coordinates
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Logo Upload -->
+                        <div class="mb-4">
+                            {{ form.logo|as_crispy_field }}
+                            <div class="form-text">
+                                <i class="bi bi-image me-1"></i>
+                                Upload a high-quality logo (recommended: 400x400px, max 2MB)
+                            </div>
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle me-2"></i>Before you continue:</h6>
+                            <ul class="mb-0 small">
+                                <li>Make sure all information is accurate and up-to-date</li>
+                                <li>Your restaurant will be reviewed before going live</li>
+                                <li>You'll receive an email confirmation once approved</li>
+                                <li>You can update your information anytime from your dashboard</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Register Restaurant
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Support Section -->
+            <div class="text-center mt-5">
+                <h5>Need Help?</h5>
+                <p class="text-muted">
+                    Our support team is here to help you get started. 
+                    <a href="mailto:support@mobilemeals.com" class="text-decoration-none">Contact us</a> 
+                    if you have any questions.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Location Helper Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="locationModalLabel">
+                    <i class="bi bi-geo-alt me-2"></i>How to Get Your Location Coordinates
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6>Step 1: Open Google Maps</h6>
+                        <p class="small text-muted">Go to <a href="https://maps.google.com" target="_blank">maps.google.com</a> and search for your restaurant location.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Step 2: Right-click on Location</h6>
+                        <p class="small text-muted">Right-click on your exact restaurant location on the map.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Step 3: Copy Coordinates</h6>
+                        <p class="small text-muted">Click on the coordinates that appear at the top of the context menu.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Step 4: Paste Here</h6>
+                        <p class="small text-muted">The first number is latitude, the second is longitude. Paste them in the respective fields.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Got it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add location helper button
+document.addEventListener('DOMContentLoaded', function() {
+    const latField = document.querySelector('#id_latitude').parentElement;
+    const helpBtn = document.createElement('button');
+    helpBtn.type = 'button';
+    helpBtn.className = 'btn btn-outline-info btn-sm mt-2';
+    helpBtn.innerHTML = '<i class="bi bi-question-circle me-1"></i>How to get coordinates?';
+    helpBtn.setAttribute('data-bs-toggle', 'modal');
+    helpBtn.setAttribute('data-bs-target', '#locationModal');
+    latField.appendChild(helpBtn);
+});
+</script>
+{% endblock %}

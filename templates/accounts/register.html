@@ -1,0 +1,558 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Join Mobile Meals Center - Register{% endblock %}
+
+{% block extra_css %}
+<style>
+.register-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.register-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="150" cy="150" r="80" fill="url(%23a)"/><circle cx="850" cy="200" r="120" fill="url(%23a)"/><circle cx="200" cy="800" r="100" fill="url(%23a)"/><circle cx="800" cy="700" r="90" fill="url(%23a)"/></svg>') no-repeat center center;
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.register-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    position: relative;
+    z-index: 1;
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-header {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.register-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+    }
+}
+
+.form-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating input, .form-floating select {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-floating input:focus, .form-floating select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.15);
+    background: white;
+}
+
+.form-floating .form-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 5;
+    transition: color 0.3s ease;
+}
+
+.form-floating input:focus + .form-icon,
+.form-floating select:focus + .form-icon {
+    color: var(--primary-color);
+}
+
+.form-floating label {
+    position: absolute;
+    top: 50%;
+    left: 3rem;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background: transparent;
+    padding: 0 0.5rem;
+}
+
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label,
+.form-floating select:focus ~ label,
+.form-floating select:not([value=""]) ~ label {
+    top: 0;
+    left: 2.5rem;
+    transform: translateY(-50%) scale(0.85);
+    color: var(--primary-color);
+    background: white;
+}
+
+.register-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.register-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.register-btn:hover::before {
+    left: 100%;
+}
+
+.register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+}
+
+.user-type-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.user-type-card {
+    flex: 1;
+    padding: 1.5rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+}
+
+.user-type-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.user-type-card.selected {
+    border-color: var(--primary-color);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+.user-type-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.user-type-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 107, 53, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.strength-bar {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.strength-fill {
+    height: 100%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.strength-weak { background: #dc3545; width: 25%; }
+.strength-fair { background: #fd7e14; width: 50%; }
+.strength-good { background: #ffc107; width: 75%; }
+.strength-strong { background: #198754; width: 100%; }
+
+.benefits-section {
+    background: rgba(255, 107, 53, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.benefit-item:last-child {
+    margin-bottom: 0;
+}
+
+.benefit-icon {
+    width: 24px;
+    height: 24px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container d-flex align-items-center py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <div class="register-card p-4 p-md-5">
+                    <!-- Header -->
+                    <div class="register-header text-center">
+                        <div class="register-icon">
+                            <i class="bi bi-person-plus text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h1 class="fw-bold mb-2">Join Mobile Meals Center</h1>
+                        <p class="text-muted mb-0">Create your account and start ordering delicious meals</p>
+                    </div>
+                    
+                    <!-- User Type Selection -->
+                    <div class="user-type-selector">
+                        <label class="user-type-card" for="customer">
+                            <input type="radio" name="user_type" id="customer" value="customer" checked>
+                            <div class="user-type-icon">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">Customer</h6>
+                            <small class="text-muted">Order from restaurants</small>
+                        </label>
+                        <label class="user-type-card" for="restaurant">
+                            <input type="radio" name="user_type" id="restaurant" value="restaurant">
+                            <div class="user-type-icon">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">Restaurant</h6>
+                            <small class="text-muted">Sell your meals</small>
+                        </label>
+                    </div>
+                    
+                    <!-- Registration Form -->
+                    <form method="post" id="registerForm">
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="form-floating">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="{{ form.username.id_for_label }}" 
+                                   name="{{ form.username.name }}"
+                                   placeholder="Username"
+                                   value="{{ form.username.value|default:'' }}"
+                                   required>
+                            <i class="bi bi-person form-icon"></i>
+                            <label for="{{ form.username.id_for_label }}">Username</label>
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Email Field -->
+                        <div class="form-floating">
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="{{ form.email.id_for_label }}" 
+                                   name="{{ form.email.name }}"
+                                   placeholder="Email"
+                                   value="{{ form.email.value|default:'' }}"
+                                   required>
+                            <i class="bi bi-envelope form-icon"></i>
+                            <label for="{{ form.email.id_for_label }}">Email Address</label>
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.email.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Name Fields -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="{{ form.first_name.id_for_label }}" 
+                                           name="{{ form.first_name.name }}"
+                                           placeholder="First Name"
+                                           value="{{ form.first_name.value|default:'' }}">
+                                    <i class="bi bi-person-badge form-icon"></i>
+                                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger small mt-1">
+                                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.first_name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="{{ form.last_name.id_for_label }}" 
+                                           name="{{ form.last_name.name }}"
+                                           placeholder="Last Name"
+                                           value="{{ form.last_name.value|default:'' }}">
+                                    <i class="bi bi-person-badge form-icon"></i>
+                                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger small mt-1">
+                                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.last_name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Password Fields -->
+                        <div class="form-floating">
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="{{ form.password1.id_for_label }}" 
+                                   name="{{ form.password1.name }}"
+                                   placeholder="Password"
+                                   required>
+                            <i class="bi bi-lock form-icon"></i>
+                            <label for="{{ form.password1.id_for_label }}">Password</label>
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthBar"></div>
+                                </div>
+                                <small class="text-muted" id="strengthText">Enter a strong password</small>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-floating">
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="{{ form.password2.id_for_label }}" 
+                                   name="{{ form.password2.name }}"
+                                   placeholder="Confirm Password"
+                                   required>
+                            <i class="bi bi-lock-fill form-icon"></i>
+                            <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label text-muted" for="terms">
+                                I agree to the <a href="#" class="text-primary">Terms of Service</a> and 
+                                <a href="#" class="text-primary">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <!-- Error Messages -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger d-flex align-items-center mb-4">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <div>{{ form.non_field_errors.0 }}</div>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Register Button -->
+                        <button type="submit" class="btn register-btn text-white w-100 mb-4">
+                            <span class="d-flex align-items-center justify-content-center">
+                                <i class="bi bi-person-plus me-2"></i>
+                                <span>Create Account</span>
+                                <div class="spinner-border spinner-border-sm ms-2 d-none" id="registerSpinner"></div>
+                            </span>
+                        </button>
+                        
+                        <!-- Sign In Link -->
+                        <div class="text-center">
+                            <p class="mb-0 text-muted">
+                                Already have an account? 
+                                <a href="{% url 'accounts:login' %}" class="text-primary text-decoration-none fw-bold">
+                                    Sign in here
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Benefits -->
+                <div class="benefits-section mt-4">
+                    <h6 class="fw-bold mb-3 text-center">
+                        <i class="bi bi-gift me-2"></i>Join Thousands of Happy Users
+                    </h6>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <span class="small text-muted">Quick 30-second registration process</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <span class="small text-muted">Fast delivery from 500+ local restaurants</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="bi bi-percent"></i>
+                        </div>
+                        <span class="small text-muted">Exclusive deals and discounts for members</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// User type selection
+document.querySelectorAll('input[name="user_type"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.user-type-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        this.closest('.user-type-card').classList.add('selected');
+    });
+});
+
+// Password strength checker
+function checkPasswordStrength(password) {
+    let strength = 0;
+    const checks = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        numbers: /\d/.test(password),
+        special: /[^\w\s]/.test(password)
+    };
+    
+    strength = Object.values(checks).filter(Boolean).length;
+    
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+    
+    strengthBar.className = 'strength-fill';
+    
+    if (strength < 2) {
+        strengthBar.classList.add('strength-weak');
+        strengthText.textContent = 'Weak password';
+        strengthText.className = 'text-danger small';
+    } else if (strength < 3) {
+        strengthBar.classList.add('strength-fair');
+        strengthText.textContent = 'Fair password';
+        strengthText.className = 'text-warning small';
+    } else if (strength < 4) {
+        strengthBar.classList.add('strength-good');
+        strengthText.textContent = 'Good password';
+        strengthText.className = 'text-info small';
+    } else {
+        strengthBar.classList.add('strength-strong');
+        strengthText.textContent = 'Strong password';
+        strengthText.className = 'text-success small';
+    }
+}
+
+document.getElementById('{{ form.password1.id_for_label }}').addEventListener('input', function() {
+    checkPasswordStrength(this.value);
+});
+
+// Form submission with loading state
+document.getElementById('registerForm').addEventListener('submit', function() {
+    const spinner = document.getElementById('registerSpinner');
+    const button = this.querySelector('button[type="submit"]');
+    
+    spinner.classList.remove('d-none');
+    button.disabled = true;
+});
+
+// Auto-focus first input
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('{{ form.username.id_for_label }}').focus();
+    // Set initial user type selection
+    document.getElementById('customer').closest('.user-type-card').classList.add('selected');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,594 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}My Profile - Mobile Meals Center{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/></svg>') no-repeat center center;
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    margin: 0 auto 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.profile-nav {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.profile-nav .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.profile-nav .nav-link.active {
+    color: var(--primary-color);
+    background: white;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.profile-nav .nav-link:hover {
+    color: var(--primary-color);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+.form-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating input, .form-floating select, .form-floating textarea {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-floating input:focus, .form-floating select:focus, .form-floating textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.15);
+    background: white;
+}
+
+.form-floating .form-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 5;
+    transition: color 0.3s ease;
+}
+
+.form-floating input:focus + .form-icon,
+.form-floating select:focus + .form-icon,
+.form-floating textarea:focus + .form-icon {
+    color: var(--primary-color);
+}
+
+.form-floating label {
+    position: absolute;
+    top: 50%;
+    left: 3rem;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background: transparent;
+    padding: 0 0.5rem;
+}
+
+.form-floating textarea ~ label {
+    top: 1.5rem;
+    transform: none;
+}
+
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label,
+.form-floating select:focus ~ label,
+.form-floating select:not([value=""]) ~ label,
+.form-floating textarea:focus ~ label,
+.form-floating textarea:not(:placeholder-shown) ~ label {
+    top: 0;
+    left: 2.5rem;
+    transform: translateY(-50%) scale(0.85);
+    color: var(--primary-color);
+    background: white;
+}
+
+.stats-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #f1f3f4;
+    transition: background-color 0.3s ease;
+}
+
+.activity-item:hover {
+    background: rgba(255, 107, 53, 0.02);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 107, 53, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    margin-right: 1rem;
+}
+
+.btn-update {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-update:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+    color: white;
+}
+
+.alert-custom {
+    border-radius: 12px;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.alert-success {
+    background: rgba(25, 135, 84, 0.1);
+    color: #155724;
+    border-left: 4px solid #198754;
+}
+
+.alert-danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Profile Header -->
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                <div class="profile-avatar">
+                    {% if user.first_name %}
+                        {{ user.first_name.0 }}{% if user.last_name %}{{ user.last_name.0 }}{% endif %}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h1 class="fw-bold mb-2">
+                    {% if user.get_full_name %}
+                        {{ user.get_full_name }}
+                    {% else %}
+                        {{ user.username }}
+                    {% endif %}
+                </h1>
+                <p class="mb-3 opacity-75">
+                    <i class="bi bi-envelope me-2"></i>{{ user.email }}
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-light text-dark px-3 py-2">
+                        <i class="bi bi-person me-1"></i>
+                        {% if user.is_restaurant %}Restaurant Owner{% else %}Customer{% endif %}
+                    </span>
+                    <span class="badge bg-light text-dark px-3 py-2">
+                        <i class="bi bi-calendar me-1"></i>
+                        Joined {{ user.date_joined|date:"F Y" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <!-- Main Profile Content -->
+        <div class="col-lg-8">
+            <div class="profile-card">
+                <!-- Navigation Tabs -->
+                <div class="profile-nav">
+                    <ul class="nav nav-tabs border-0" id="profileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">
+                                <i class="bi bi-person me-2"></i>Personal Info
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
+                                <i class="bi bi-shield-lock me-2"></i>Security
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="preferences-tab" data-bs-toggle="tab" data-bs-target="#preferences" type="button" role="tab">
+                                <i class="bi bi-gear me-2"></i>Preferences
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content p-4" id="profileTabContent">
+                    <!-- Personal Information Tab -->
+                    <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                        <h5 class="fw-bold mb-4">
+                            <i class="bi bi-person-circle me-2"></i>Personal Information
+                        </h5>
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-custom d-flex align-items-center mb-4">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="first_name" 
+                                               name="first_name"
+                                               placeholder="First Name"
+                                               value="{{ user.first_name }}">
+                                        <i class="bi bi-person form-icon"></i>
+                                        <label for="first_name">First Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="last_name" 
+                                               name="last_name"
+                                               placeholder="Last Name"
+                                               value="{{ user.last_name }}">
+                                        <i class="bi bi-person form-icon"></i>
+                                        <label for="last_name">Last Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email"
+                                       placeholder="Email"
+                                       value="{{ user.email }}"
+                                       required>
+                                <i class="bi bi-envelope form-icon"></i>
+                                <label for="email">Email Address</label>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="username" 
+                                       name="username"
+                                       placeholder="Username"
+                                       value="{{ user.username }}"
+                                       required>
+                                <i class="bi bi-at form-icon"></i>
+                                <label for="username">Username</label>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-update">
+                                    <i class="bi bi-check-circle me-2"></i>Update Profile
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Security Tab -->
+                    <div class="tab-pane fade" id="security" role="tabpanel">
+                        <h5 class="fw-bold mb-4">
+                            <i class="bi bi-shield-lock me-2"></i>Security Settings
+                        </h5>
+                        
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold mb-3">Change Password</h6>
+                                        <p class="text-muted mb-3">Keep your account secure by using a strong password</p>
+                                        <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary">
+                                            <i class="bi bi-key me-2"></i>Change Password
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold mb-3">Account Security</h6>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Two-Factor Authentication</span>
+                                            <span class="badge bg-warning">Coming Soon</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Login Notifications</span>
+                                            <span class="badge bg-success">Enabled</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Account Status</span>
+                                            <span class="badge bg-success">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferences Tab -->
+                    <div class="tab-pane fade" id="preferences" role="tabpanel">
+                        <h5 class="fw-bold mb-4">
+                            <i class="bi bi-gear me-2"></i>Account Preferences
+                        </h5>
+                        
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold mb-3">Notifications</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                            <label class="form-check-label" for="emailNotifications">
+                                                Email notifications for orders
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="smsNotifications">
+                                            <label class="form-check-label" for="smsNotifications">
+                                                SMS notifications for delivery updates
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="promotionalEmails" checked>
+                                            <label class="form-check-label" for="promotionalEmails">
+                                                Promotional emails and offers
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold mb-3">Privacy</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="profileVisibility" checked>
+                                            <label class="form-check-label" for="profileVisibility">
+                                                Make my profile visible to restaurants
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="orderHistory">
+                                            <label class="form-check-label" for="orderHistory">
+                                                Share order history for better recommendations
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-update">
+                                <i class="bi bi-check-circle me-2"></i>Save Preferences
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Account Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="stats-card">
+                        <div class="stats-number">{{ user.orders.count|default:0 }}</div>
+                        <div class="small">Total Orders</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stats-card">
+                        <div class="stats-number">4.8</div>
+                        <div class="small">Rating</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="profile-card mb-4">
+                <div class="p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-lightning me-2"></i>Quick Actions
+                    </h6>
+                    <div class="d-grid gap-2">
+                        {% if user.is_restaurant %}
+                            <a href="{% url 'restaurants:dashboard' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-shop me-2"></i>Restaurant Dashboard
+                            </a>
+                            <a href="{% url 'meals:create' %}" class="btn btn-outline-success">
+                                <i class="bi bi-plus-circle me-2"></i>Add New Meal
+                            </a>
+                        {% else %}
+                            <a href="{% url 'orders:list' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-receipt me-2"></i>My Orders
+                            </a>
+                            <a href="{% url 'core:search' %}" class="btn btn-outline-success">
+                                <i class="bi bi-search me-2"></i>Find Restaurants
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger">
+                            <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="profile-card">
+                <div class="p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-clock-history me-2"></i>Recent Activity
+                    </h6>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-person-check"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">Profile Updated</div>
+                            <div class="text-muted small">Updated personal information</div>
+                            <div class="text-muted small">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">Password Changed</div>
+                            <div class="text-muted small">Account security updated</div>
+                            <div class="text-muted small">1 day ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">Account Login</div>
+                            <div class="text-muted small">Signed in from Chrome</div>
+                            <div class="text-muted small">3 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Save preferences
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle preference changes
+    const switches = document.querySelectorAll('.form-check-input');
+    switches.forEach(switchEl => {
+        switchEl.addEventListener('change', function() {
+            // Here you would typically make an AJAX call to save the preference
+            console.log(`${this.id} changed to: ${this.checked}`);
+        });
+    });
+});
+</script>
+{% endblock %}
