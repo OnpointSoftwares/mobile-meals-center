@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terms of Service - Mobile Meals Center{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="mb-4 text-center">Terms of Service</h1>
+                    <p class="text-muted text-center mb-5">Last updated: {{ "now"|date:"F d, Y" }}</p>
+                    
+                    <div class="terms-content">
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">1. Acceptance of Terms</h2>
+                            <p>By accessing and using Mobile Meals Center ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">2. Description of Service</h2>
+                            <p>Mobile Meals Center is an online platform that connects customers with local restaurants for food ordering and delivery services. We facilitate:</p>
+                            <ul>
+                                <li>Online food ordering from partner restaurants</li>
+                                <li>Payment processing for orders</li>
+                                <li>Coordination of food delivery services</li>
+                                <li>Customer support and order management</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">3. User Accounts</h2>
+                            <h5 class="mt-4">Account Registration</h5>
+                            <p>To use certain features of our service, you must register for an account. You agree to:</p>
+                            <ul>
+                                <li>Provide accurate, current, and complete information</li>
+                                <li>Maintain and update your account information</li>
+                                <li>Keep your password secure and confidential</li>
+                                <li>Accept responsibility for all activities under your account</li>
+                            </ul>
+                            
+                            <h5 class="mt-4">Account Types</h5>
+                            <ul>
+                                <li><strong>Customer Accounts:</strong> For ordering food and managing deliveries</li>
+                                <li><strong>Restaurant Accounts:</strong> For managing menus, orders, and restaurant information</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">4. Ordering and Payment</h2>
+                            <h5 class="mt-4">Order Placement</h5>
+                            <p>When you place an order, you agree that:</p>
+                            <ul>
+                                <li>All order information is accurate and complete</li>
+                                <li>You have authorization to use the payment method provided</li>
+                                <li>You will be available to receive the order at the specified address</li>
+                                <li>Orders are subject to restaurant availability and acceptance</li>
+                            </ul>
+                            
+                            <h5 class="mt-4">Pricing and Payment</h5>
+                            <ul>
+                                <li>All prices are listed in Kenyan Shillings (KES)</li>
+                                <li>Prices include applicable taxes and delivery fees</li>
+                                <li>Payment is processed securely through our payment partners</li>
+                                <li>We accept credit/debit cards, M-Pesa, and cash on delivery</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">5. Delivery Terms</h2>
+                            <p>Delivery services are subject to the following terms:</p>
+                            <ul>
+                                <li>Delivery times are estimates and may vary due to weather, traffic, or other factors</li>
+                                <li>You must provide accurate delivery address and contact information</li>
+                                <li>Someone must be available to receive the order at the delivery address</li>
+                                <li>Delivery fees are clearly displayed before order confirmation</li>
+                                <li>We are not responsible for orders delivered to incorrect addresses due to customer error</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">6. Cancellations and Refunds</h2>
+                            <h5 class="mt-4">Order Cancellation</h5>
+                            <p>Orders may be cancelled:</p>
+                            <ul>
+                                <li>By customers within 5 minutes of placement (before restaurant confirmation)</li>
+                                <li>By restaurants if they cannot fulfill the order</li>
+                                <li>By Mobile Meals Center in case of technical issues or safety concerns</li>
+                            </ul>
+                            
+                            <h5 class="mt-4">Refund Policy</h5>
+                            <ul>
+                                <li>Full refunds for cancelled orders before preparation begins</li>
+                                <li>Partial refunds may be issued for missing or incorrect items</li>
+                                <li>Refunds are processed within 5-7 business days</li>
+                                <li>Cash on delivery orders receive refunds via M-Pesa or bank transfer</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">7. Restaurant Partner Obligations</h2>
+                            <p>Restaurant partners agree to:</p>
+                            <ul>
+                                <li>Maintain accurate menu information and pricing</li>
+                                <li>Prepare orders according to customer specifications</li>
+                                <li>Maintain food safety and quality standards</li>
+                                <li>Respond to orders within reasonable timeframes</li>
+                                <li>Comply with local health and safety regulations</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">8. Prohibited Uses</h2>
+                            <p>You may not use our service to:</p>
+                            <ul>
+                                <li>Violate any local, state, national, or international law</li>
+                                <li>Transmit or procure harmful or malicious code</li>
+                                <li>Collect or harvest personal information from other users</li>
+                                <li>Impersonate another person or entity</li>
+                                <li>Interfere with or disrupt the service or servers</li>
+                                <li>Use the service for fraudulent or unauthorized purposes</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">9. Intellectual Property</h2>
+                            <p>The Mobile Meals Center platform, including its design, functionality, and content, is protected by copyright, trademark, and other intellectual property laws. You may not:</p>
+                            <ul>
+                                <li>Copy, modify, or distribute our content without permission</li>
+                                <li>Use our trademarks or logos without authorization</li>
+                                <li>Reverse engineer or attempt to extract source code</li>
+                                <li>Create derivative works based on our platform</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">10. Limitation of Liability</h2>
+                            <p>Mobile Meals Center shall not be liable for:</p>
+                            <ul>
+                                <li>Food quality, safety, or preparation issues (restaurant responsibility)</li>
+                                <li>Delivery delays due to external factors</li>
+                                <li>Indirect, incidental, or consequential damages</li>
+                                <li>Loss of profits, data, or business opportunities</li>
+                                <li>Actions or omissions of third-party service providers</li>
+                            </ul>
+                            <p>Our total liability shall not exceed the amount paid for the specific order in question.</p>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">11. Indemnification</h2>
+                            <p>You agree to indemnify and hold harmless Mobile Meals Center, its officers, directors, employees, and agents from any claims, damages, or expenses arising from:</p>
+                            <ul>
+                                <li>Your use of the service</li>
+                                <li>Your violation of these terms</li>
+                                <li>Your violation of any third-party rights</li>
+                                <li>Any content you submit or transmit through the service</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">12. Termination</h2>
+                            <p>We may terminate or suspend your account and access to the service:</p>
+                            <ul>
+                                <li>For violation of these terms of service</li>
+                                <li>For fraudulent or suspicious activity</li>
+                                <li>At our sole discretion with or without notice</li>
+                                <li>Upon your request to delete your account</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">13. Governing Law</h2>
+                            <p>These terms shall be governed by and construed in accordance with the laws of Kenya. Any disputes arising under these terms shall be subject to the exclusive jurisdiction of the courts of Kenya.</p>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">14. Changes to Terms</h2>
+                            <p>We reserve the right to modify these terms at any time. We will notify users of material changes by:</p>
+                            <ul>
+                                <li>Posting updated terms on our website</li>
+                                <li>Sending email notifications to registered users</li>
+                                <li>Displaying notices on our platform</li>
+                            </ul>
+                            <p>Continued use of the service after changes constitutes acceptance of the new terms.</p>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="h4 mb-3">15. Contact Information</h2>
+                            <p>For questions about these Terms of Service, please contact us:</p>
+                            <div class="contact-info bg-light p-4 rounded">
+                                <p class="mb-2"><strong>Email:</strong> mobilemealscenter@gmail.com</p>
+                                <p class="mb-2"><strong>Phone:</strong> +254 702502952</p>
+                                <p class="mb-0"><strong>Address:</strong> Mobile Meals Center, Nairobi, Kenya</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.terms-content h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #e74c3c;
+    padding-bottom: 0.5rem;
+}
+
+.terms-content h5 {
+    color: #34495e;
+    margin-top: 1.5rem;
+}
+
+.terms-content ul {
+    padding-left: 1.5rem;
+}
+
+.terms-content li {
+    margin-bottom: 0.5rem;
+}
+
+.contact-info {
+    border-left: 4px solid #e74c3c;
+}
+</style>
+{% endblock %}

@@ -82,12 +82,24 @@
     background: rgba(255, 107, 53, 0.05);
 }
 
-.form-floating {
-    position: relative;
+.form-group {
     margin-bottom: 1.5rem;
 }
 
-.form-floating input, .form-floating select, .form-floating textarea {
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group .input-wrapper {
+    position: relative;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
     border: 2px solid #e9ecef;
     border-radius: 12px;
     padding: 1rem 1rem 1rem 3rem;
@@ -96,13 +108,14 @@
     background: rgba(255, 255, 255, 0.9);
 }
 
-.form-floating input:focus, .form-floating select:focus, .form-floating textarea:focus {
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.15);
     background: white;
+    outline: none;
 }
 
-.form-floating .form-icon {
+.form-group .form-icon {
     position: absolute;
     left: 1rem;
     top: 50%;
@@ -112,40 +125,10 @@
     transition: color 0.3s ease;
 }
 
-.form-floating input:focus + .form-icon,
-.form-floating select:focus + .form-icon,
-.form-floating textarea:focus + .form-icon {
+.form-group input:focus + .form-icon,
+.form-group select:focus + .form-icon,
+.form-group textarea:focus + .form-icon {
     color: var(--primary-color);
-}
-
-.form-floating label {
-    position: absolute;
-    top: 50%;
-    left: 3rem;
-    transform: translateY(-50%);
-    color: #6c757d;
-    pointer-events: none;
-    transition: all 0.3s ease;
-    background: transparent;
-    padding: 0 0.5rem;
-}
-
-.form-floating textarea ~ label {
-    top: 1.5rem;
-    transform: none;
-}
-
-.form-floating input:focus ~ label,
-.form-floating input:not(:placeholder-shown) ~ label,
-.form-floating select:focus ~ label,
-.form-floating select:not([value=""]) ~ label,
-.form-floating textarea:focus ~ label,
-.form-floating textarea:not(:placeholder-shown) ~ label {
-    top: 0;
-    left: 2.5rem;
-    transform: translateY(-50%) scale(0.85);
-    color: var(--primary-color);
-    background: white;
 }
 
 .stats-card {
@@ -327,53 +310,69 @@
                             
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" 
-                                               class="form-control" 
-                                               id="first_name" 
-                                               name="first_name"
-                                               placeholder="First Name"
-                                               value="{{ user.first_name }}">
-                                        <i class="bi bi-person form-icon"></i>
-                                        <label for="first_name">First Name</label>
+                                    <div class="form-group">
+                                        <label for="first_name">
+                                            <i class="bi bi-person me-2"></i>First Name
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="first_name" 
+                                                   name="first_name"
+                                                   placeholder="Enter your first name"
+                                                   value="{{ user.first_name }}">
+                                            <i class="bi bi-person form-icon"></i>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" 
-                                               class="form-control" 
-                                               id="last_name" 
-                                               name="last_name"
-                                               placeholder="Last Name"
-                                               value="{{ user.last_name }}">
-                                        <i class="bi bi-person form-icon"></i>
-                                        <label for="last_name">Last Name</label>
+                                    <div class="form-group">
+                                        <label for="last_name">
+                                            <i class="bi bi-person me-2"></i>Last Name
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="last_name" 
+                                                   name="last_name"
+                                                   placeholder="Enter your last name"
+                                                   value="{{ user.last_name }}">
+                                            <i class="bi bi-person form-icon"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="form-floating">
-                                <input type="email" 
-                                       class="form-control" 
-                                       id="email" 
-                                       name="email"
-                                       placeholder="Email"
-                                       value="{{ user.email }}"
-                                       required>
-                                <i class="bi bi-envelope form-icon"></i>
-                                <label for="email">Email Address</label>
+                            <div class="form-group">
+                                <label for="email">
+                                    <i class="bi bi-envelope me-2"></i>Email Address
+                                </label>
+                                <div class="input-wrapper">
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           name="email"
+                                           placeholder="Enter your email address"
+                                           value="{{ user.email }}"
+                                           required>
+                                    <i class="bi bi-envelope form-icon"></i>
+                                </div>
                             </div>
                             
-                            <div class="form-floating">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="username" 
-                                       name="username"
-                                       placeholder="Username"
-                                       value="{{ user.username }}"
-                                       required>
-                                <i class="bi bi-at form-icon"></i>
-                                <label for="username">Username</label>
+                            <div class="form-group">
+                                <label for="username">
+                                    <i class="bi bi-at me-2"></i>Username
+                                </label>
+                                <div class="input-wrapper">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="username" 
+                                           name="username"
+                                           placeholder="Enter your username"
+                                           value="{{ user.username }}"
+                                           required>
+                                    <i class="bi bi-at form-icon"></i>
+                                </div>
                             </div>
                             
                             <div class="d-flex justify-content-end">

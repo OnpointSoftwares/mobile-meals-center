@@ -76,7 +76,7 @@ class CreatePaymentIntentView(LoginRequiredMixin, View):
             # For card and M-Pesa payments, create Stripe Payment Intent
             intent = stripe.PaymentIntent.create(
                 amount=int(total_amount * 100),  # Amount in cents
-                currency='usd',  # Change to 'kes' for Kenya Shillings if using M-Pesa
+                currency='kes',  # Kenya Shillings
                 payment_method_types=['card', 'mpesa'],  # Enable both card and M-Pesa
                 metadata={
                     'order_id': str(order.id),

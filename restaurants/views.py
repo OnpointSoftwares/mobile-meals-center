@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -66,6 +66,20 @@ class RestaurantUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, 'Restaurant profile updated successfully!')
         return super().form_valid(form)
+
+
+class RestaurantDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Restaurant
+    template_name = 'restaurants/delete.html'
+    success_url = reverse_lazy('core:home')
+    
+    def test_func(self):
+        restaurant = self.get_object()
+        return self.request.user == restaurant.owner
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Restaurant profile deleted successfully!')
+        return super().delete(request, *args, **kwargs)
 
 
 class RestaurantDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):

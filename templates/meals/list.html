@@ -1,0 +1,595 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Browse Meals - Mobile Meals Center{% endblock %}
+
+{% block extra_css %}
+<style>
+.meals-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 4rem 0 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.meals-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="300" cy="700" r="120" fill="url(%23a)"/></svg>') no-repeat center center;
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.meals-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.search-filters {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: -3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 50px;
+    padding: 1rem 3rem 1rem 1.5rem;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.search-box .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+
+.search-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary-color);
+    border: none;
+    border-radius: 50px;
+    width: 45px;
+    height: 45px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.filter-btn {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    color: #6c757d;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.meals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.meal-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.meal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.meal-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.meal-content {
+    padding: 1.5rem;
+}
+
+.meal-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.meal-description {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.meal-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.meal-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.meal-time {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.restaurant-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    margin-bottom: 1rem;
+}
+
+.restaurant-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #f8f9fa;
+}
+
+.restaurant-name {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.meal-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-view {
+    flex: 1;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    color: #495057;
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-view:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-add-cart {
+    flex: 2;
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-add-cart:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+}
+
+.availability-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.available {
+    background: rgba(25, 135, 84, 0.9);
+}
+
+.unavailable {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.no-meals {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6c757d;
+}
+
+.no-meals i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #dee2e6;
+}
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+.page-link {
+    color: var(--primary-color);
+    border-color: #e9ecef;
+    padding: 0.75rem 1rem;
+}
+
+.page-link:hover {
+    color: var(--secondary-color);
+    background-color: rgba(255, 107, 53, 0.1);
+    border-color: var(--primary-color);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.results-info {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #6c757d;
+}
+
+.sort-dropdown {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    background: white;
+    color: #495057;
+}
+
+@media (max-width: 768px) {
+    .meals-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .search-filters {
+        padding: 1rem;
+        margin-top: -2rem;
+    }
+    
+    .filter-btn {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="meals-hero">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-grid-3x3-gap me-3"></i>Browse Delicious Meals
+            </h1>
+            <p class="lead mb-0">Discover amazing dishes from local restaurants</p>
+        </div>
+    </div>
+</section>
+
+<!-- Search and Filters -->
+<section class="py-4">
+    <div class="container">
+        <div class="search-filters">
+            <form method="get" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-6">
+                        <div class="search-box">
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="q" 
+                                   placeholder="Search for meals, restaurants, or cuisines..."
+                                   value="{{ request.GET.q }}">
+                            <button type="submit" class="search-btn">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <select name="category" class="form-control sort-dropdown">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" 
+                                        {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <select name="sort" class="form-control sort-dropdown">
+                            <option value="">Sort by</option>
+                            <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name A-Z</option>
+                            <option value="-name" {% if request.GET.sort == '-name' %}selected{% endif %}>Name Z-A</option>
+                            <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Price Low-High</option>
+                            <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>Price High-Low</option>
+                            <option value="-created_at" {% if request.GET.sort == '-created_at' %}selected{% endif %}>Newest First</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Quick Filters -->
+            <div class="d-flex flex-wrap gap-2">
+                <a href="?available=true" class="filter-btn {% if request.GET.available %}active{% endif %}">
+                    <i class="bi bi-check-circle"></i>Available Now
+                </a>
+                <a href="?price_range=low" class="filter-btn {% if request.GET.price_range == 'low' %}active{% endif %}">
+                    <i class="bi bi-currency-dollar"></i>Under KES 1,000
+                </a>
+                <a href="?price_range=medium" class="filter-btn {% if request.GET.price_range == 'medium' %}active{% endif %}">
+                    <i class="bi bi-currency-dollar"></i>KES 1,000 - 2,000
+                </a>
+                <a href="?fast=true" class="filter-btn {% if request.GET.fast %}active{% endif %}">
+                    <i class="bi bi-lightning"></i>Quick (Under 20 mins)
+                </a>
+                <a href="{% url 'meals:list' %}" class="filter-btn">
+                    <i class="bi bi-arrow-clockwise"></i>Clear Filters
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Meals Grid -->
+<section class="py-4">
+    <div class="container">
+        <!-- Results Info -->
+        <div class="results-info">
+            <div>
+                <strong>{{ meals|length }}</strong> meal{{ meals|length|pluralize }} found
+                {% if request.GET.q %}for "<strong>{{ request.GET.q }}</strong>"{% endif %}
+            </div>
+        </div>
+        
+        {% if meals %}
+            <div class="meals-grid">
+                {% for meal in meals %}
+                    <div class="meal-card">
+                        <!-- Availability Badge -->
+                        <div class="availability-badge {% if meal.is_available %}available{% else %}unavailable{% endif %}">
+                            {% if meal.is_available %}
+                                <i class="bi bi-check-circle me-1"></i>Available
+                            {% else %}
+                                <i class="bi bi-x-circle me-1"></i>Unavailable
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Meal Image -->
+                        {% if meal.image %}
+                            <img src="{{ meal.image.url }}" alt="{{ meal.name }}" class="meal-image">
+                        {% else %}
+                            <div class="meal-image d-flex align-items-center justify-content-center">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Meal Content -->
+                        <div class="meal-content">
+                            <h5 class="meal-title">{{ meal.name }}</h5>
+                            <p class="meal-description">{{ meal.description|truncatewords:15 }}</p>
+                            
+                            <!-- Meta Info -->
+                            <div class="meal-meta">
+                                <div class="meal-price">KES {{ meal.price }}</div>
+                                <div class="meal-time">
+                                    <i class="bi bi-clock"></i>
+                                    {{ meal.preparation_time }} mins
+                                </div>
+                            </div>
+                            
+                            <!-- Restaurant Info -->
+                            <div class="restaurant-info">
+                                {% if meal.restaurant.logo %}
+                                    <img src="{{ meal.restaurant.logo.url }}" alt="{{ meal.restaurant.name }}" class="restaurant-logo">
+                                {% else %}
+                                    <div class="restaurant-logo d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-shop text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <div class="restaurant-name">{{ meal.restaurant.name }}</div>
+                                    {% if meal.category %}
+                                        <small class="text-muted">{{ meal.category.name }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="meal-actions">
+                                <a href="{% url 'meals:detail' meal.pk %}" class="btn-view">
+                                    <i class="bi bi-eye me-1"></i>View
+                                </a>
+                                {% if meal.is_available %}
+                                    <button class="btn-add-cart" onclick="addToCart({{ meal.pk }})">
+                                        <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                    </button>
+                                {% else %}
+                                    <button class="btn-add-cart" disabled style="background: #6c757d;">
+                                        <i class="bi bi-x-circle me-1"></i>Unavailable
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if is_paginated %}
+                <div class="pagination-wrapper">
+                    <nav aria-label="Meals pagination">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                        <i class="bi bi-chevron-double-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+            
+        {% else %}
+            <!-- No Meals Found -->
+            <div class="no-meals">
+                <i class="bi bi-search"></i>
+                <h3>No meals found</h3>
+                <p class="mb-4">
+                    {% if request.GET.q %}
+                        We couldn't find any meals matching "<strong>{{ request.GET.q }}</strong>".
+                    {% else %}
+                        No meals are currently available.
+                    {% endif %}
+                </p>
+                <a href="{% url 'meals:list' %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-clockwise me-2"></i>Browse All Meals
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+// Add to cart functionality
+function addToCart(mealId) {
+    // This would typically make an AJAX call to add the meal to cart
+    // For now, we'll show a simple alert
+    alert('Meal added to cart! (This would be implemented with AJAX)');
+    
+    // Example AJAX implementation:
+    /*
+    fetch('/cart/add/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            'meal_id': mealId,
+            'quantity': 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update cart counter, show success message, etc.
+            showToast('Meal added to cart!', 'success');
+        } else {
+            showToast('Error adding meal to cart', 'error');
+        }
+    });
+    */
+}
+
+// Auto-submit form when filters change
+document.querySelectorAll('select[name="category"], select[name="sort"]').forEach(select => {
+    select.addEventListener('change', function() {
+        this.form.submit();
+    });
+});
+
+// Toast notification function (placeholder)
+function showToast(message, type) {
+    // This would show a toast notification
+    console.log(`${type}: ${message}`);
+}
+</script>
+{% endblock %}

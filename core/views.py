@@ -59,3 +59,11 @@ class SearchView(TemplateView):
             'max_price': max_price,
         })
         return context
+
+
+class PrivacyPolicyView(TemplateView):
+    template_name = 'core/privacy_policy.html'
+
+
+class TermsOfServiceView(TemplateView):
+    template_name = 'core/terms_of_service.html'

@@ -28,7 +28,7 @@
                             </p>
                         </div>
                         <div class="text-end">
-                            <h2 class="text-primary fw-bold">${{ meal.price }}</h2>
+                            <h2 class="text-primary fw-bold">KES {{ meal.price }}</h2>
                             {% if meal.category %}
                             <span class="badge bg-light text-dark">{{ meal.category.name }}</span>
                             {% endif %}
@@ -150,7 +150,7 @@
                                         {{ similar_meal.name }}
                                     </a>
                                 </h6>
-                                <small class="text-primary">${{ similar_meal.price }}</small>
+                                <small class="text-primary">KES{{ similar_meal.price }}</small>
                             </div>
                         </div>
                         {% endif %}

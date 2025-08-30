@@ -79,10 +79,10 @@
                                             {% endif %}
                                             <div>
                                                 <h6 class="mb-0 small">{{ item.quantity }}x {{ item.meal.name }}</h6>
-                                                <small class="text-muted">${{ item.meal.price }} each</small>
+                                                <small class="text-muted">KES{{ item.meal.price }} each</small>
                                             </div>
                                         </div>
-                                        <span class="fw-bold">${{ item.total }}</span>
+                                        <span class="fw-bold">KES{{ item.total }}</span>
                                     </div>
                                     {% endfor %}
                                 </div>
@@ -92,22 +92,22 @@
                                 <!-- Cost Breakdown -->
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Subtotal:</span>
-                                    <span>${{ total }}</span>
+                                    <span>KES{{ total }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Delivery Fee:</span>
-                                    <span>$3.99</span>
+                                    <span>KES3.99</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Tax (8%):</span>
-                                    <span id="order-tax-amount">$0.00</span>
+                                    <span id="order-tax-amount">KES0.00</span>
                                 </div>
                                 
                                 <hr>
                                 
                                 <div class="d-flex justify-content-between fw-bold fs-5">
                                     <span>Total:</span>
-                                    <span class="text-primary" id="order-final-total">$0.00</span>
+                                    <span class="text-primary" id="order-final-total">KES0.00</span>
                                 </div>
                                 
                                 <!-- Estimated Delivery -->
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (subtotalElement) {
-        const subtotalText = subtotalElement.textContent.replace('$', '');
+        const subtotalText = subtotalElement.textContent.replace('KES', '');
         const subtotal = parseFloat(subtotalText) || 0;
         const deliveryFee = 3.99;
         const taxRate = 0.08;
@@ -176,13 +176,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update tax amount
         const taxElement = document.getElementById('order-tax-amount');
         if (taxElement) {
-            taxElement.textContent = '$' + taxAmount.toFixed(2);
+            taxElement.textContent = 'KES' + taxAmount.toFixed(2);
         }
         
         // Update final total
         const totalElement = document.getElementById('order-final-total');
         if (totalElement) {
-            totalElement.textContent = '$' + finalTotal.toFixed(2);
+            totalElement.textContent = 'KES' + finalTotal.toFixed(2);
         }
     }
 });

@@ -76,12 +76,24 @@
     }
 }
 
-.form-floating {
-    position: relative;
+.form-group {
     margin-bottom: 1.5rem;
 }
 
-.form-floating input, .form-floating select {
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group .input-wrapper {
+    position: relative;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
     border: 2px solid #e9ecef;
     border-radius: 12px;
     padding: 1rem 1rem 1rem 3rem;
@@ -90,13 +102,14 @@
     background: rgba(255, 255, 255, 0.9);
 }
 
-.form-floating input:focus, .form-floating select:focus {
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.15);
     background: white;
+    outline: none;
 }
 
-.form-floating .form-icon {
+.form-group .form-icon {
     position: absolute;
     left: 1rem;
     top: 50%;
@@ -106,32 +119,10 @@
     transition: color 0.3s ease;
 }
 
-.form-floating input:focus + .form-icon,
-.form-floating select:focus + .form-icon {
+.form-group input:focus + .form-icon,
+.form-group select:focus + .form-icon,
+.form-group textarea:focus + .form-icon {
     color: var(--primary-color);
-}
-
-.form-floating label {
-    position: absolute;
-    top: 50%;
-    left: 3rem;
-    transform: translateY(-50%);
-    color: #6c757d;
-    pointer-events: none;
-    transition: all 0.3s ease;
-    background: transparent;
-    padding: 0 0.5rem;
-}
-
-.form-floating input:focus ~ label,
-.form-floating input:not(:placeholder-shown) ~ label,
-.form-floating select:focus ~ label,
-.form-floating select:not([value=""]) ~ label {
-    top: 0;
-    left: 2.5rem;
-    transform: translateY(-50%) scale(0.85);
-    color: var(--primary-color);
-    background: white;
 }
 
 .register-btn {
@@ -308,36 +299,44 @@
                         {% csrf_token %}
                         
                         <!-- Username Field -->
-                        <div class="form-floating">
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="{{ form.username.id_for_label }}" 
-                                   name="{{ form.username.name }}"
-                                   placeholder="Username"
-                                   value="{{ form.username.value|default:'' }}"
-                                   required>
-                            <i class="bi bi-person form-icon"></i>
-                            <label for="{{ form.username.id_for_label }}">Username</label>
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}">
+                                <i class="bi bi-person me-2"></i>Username
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="{{ form.username.id_for_label }}" 
+                                       name="{{ form.username.name }}"
+                                       placeholder="Choose a unique username"
+                                       value="{{ form.username.value|default:'' }}"
+                                       required>
+                                <i class="bi bi-person form-icon"></i>
+                            </div>
                             {% if form.username.errors %}
-                                <div class="text-danger small mt-1">
+                                <div class="text-danger small mt-2">
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ form.username.errors.0 }}
                                 </div>
                             {% endif %}
                         </div>
                         
                         <!-- Email Field -->
-                        <div class="form-floating">
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="{{ form.email.id_for_label }}" 
-                                   name="{{ form.email.name }}"
-                                   placeholder="Email"
-                                   value="{{ form.email.value|default:'' }}"
-                                   required>
-                            <i class="bi bi-envelope form-icon"></i>
-                            <label for="{{ form.email.id_for_label }}">Email Address</label>
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}">
+                                <i class="bi bi-envelope me-2"></i>Email Address
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="{{ form.email.id_for_label }}" 
+                                       name="{{ form.email.name }}"
+                                       placeholder="Enter your email address"
+                                       value="{{ form.email.value|default:'' }}"
+                                       required>
+                                <i class="bi bi-envelope form-icon"></i>
+                            </div>
                             {% if form.email.errors %}
-                                <div class="text-danger small mt-1">
+                                <div class="text-danger small mt-2">
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ form.email.errors.0 }}
                                 </div>
                             {% endif %}
@@ -346,34 +345,42 @@
                         <!-- Name Fields -->
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="{{ form.first_name.id_for_label }}" 
-                                           name="{{ form.first_name.name }}"
-                                           placeholder="First Name"
-                                           value="{{ form.first_name.value|default:'' }}">
-                                    <i class="bi bi-person-badge form-icon"></i>
-                                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                                <div class="form-group">
+                                    <label for="{{ form.first_name.id_for_label }}">
+                                        <i class="bi bi-person-badge me-2"></i>First Name
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="{{ form.first_name.id_for_label }}" 
+                                               name="{{ form.first_name.name }}"
+                                               placeholder="Enter your first name"
+                                               value="{{ form.first_name.value|default:'' }}">
+                                        <i class="bi bi-person-badge form-icon"></i>
+                                    </div>
                                     {% if form.first_name.errors %}
-                                        <div class="text-danger small mt-1">
+                                        <div class="text-danger small mt-2">
                                             <i class="bi bi-exclamation-circle me-1"></i>{{ form.first_name.errors.0 }}
                                         </div>
                                     {% endif %}
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="{{ form.last_name.id_for_label }}" 
-                                           name="{{ form.last_name.name }}"
-                                           placeholder="Last Name"
-                                           value="{{ form.last_name.value|default:'' }}">
-                                    <i class="bi bi-person-badge form-icon"></i>
-                                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                <div class="form-group">
+                                    <label for="{{ form.last_name.id_for_label }}">
+                                        <i class="bi bi-person-badge me-2"></i>Last Name
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="{{ form.last_name.id_for_label }}" 
+                                               name="{{ form.last_name.name }}"
+                                               placeholder="Enter your last name"
+                                               value="{{ form.last_name.value|default:'' }}">
+                                        <i class="bi bi-person-badge form-icon"></i>
+                                    </div>
                                     {% if form.last_name.errors %}
-                                        <div class="text-danger small mt-1">
+                                        <div class="text-danger small mt-2">
                                             <i class="bi bi-exclamation-circle me-1"></i>{{ form.last_name.errors.0 }}
                                         </div>
                                     {% endif %}
@@ -381,16 +388,71 @@
                             </div>
                         </div>
                         
+                        <!-- Phone and Address Fields -->
+                        <div class="form-group">
+                            <label for="{{ form.phone.id_for_label }}">
+                                <i class="bi bi-telephone me-2"></i>Phone Number <span class="text-muted">(Optional)</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="{{ form.phone.id_for_label }}" 
+                                       name="{{ form.phone.name }}"
+                                       placeholder="Enter your phone number"
+                                       value="{{ form.phone.value|default:'' }}">
+                                <i class="bi bi-telephone form-icon"></i>
+                            </div>
+                            {% if form.phone.errors %}
+                                <div class="text-danger small mt-2">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.phone.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.address.id_for_label }}">
+                                <i class="bi bi-geo-alt me-2"></i>Address <span class="text-muted">(Optional)</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <textarea class="form-control" 
+                                          id="{{ form.address.id_for_label }}" 
+                                          name="{{ form.address.name }}"
+                                          placeholder="Enter your address"
+                                          style="height: 80px; padding-top: 1rem;">{{ form.address.value|default:'' }}</textarea>
+                                <i class="bi bi-geo-alt form-icon"></i>
+                            </div>
+                            {% if form.address.errors %}
+                                <div class="text-danger small mt-2">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ form.address.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Hidden User Type Field -->
+                        <input type="hidden" 
+                               id="{{ form.user_type.id_for_label }}" 
+                               name="{{ form.user_type.name }}" 
+                               value="customer">
+                        {% if form.user_type.errors %}
+                            <div class="text-danger small mt-1">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ form.user_type.errors.0 }}
+                            </div>
+                        {% endif %}
+                        
                         <!-- Password Fields -->
-                        <div class="form-floating">
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="{{ form.password1.id_for_label }}" 
-                                   name="{{ form.password1.name }}"
-                                   placeholder="Password"
-                                   required>
-                            <i class="bi bi-lock form-icon"></i>
-                            <label for="{{ form.password1.id_for_label }}">Password</label>
+                        <div class="form-group">
+                            <label for="{{ form.password1.id_for_label }}">
+                                <i class="bi bi-lock me-2"></i>Password
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="{{ form.password1.id_for_label }}" 
+                                       name="{{ form.password1.name }}"
+                                       placeholder="Create a strong password"
+                                       required>
+                                <i class="bi bi-lock form-icon"></i>
+                            </div>
                             <div class="password-strength">
                                 <div class="strength-bar">
                                     <div class="strength-fill" id="strengthBar"></div>
@@ -398,23 +460,27 @@
                                 <small class="text-muted" id="strengthText">Enter a strong password</small>
                             </div>
                             {% if form.password1.errors %}
-                                <div class="text-danger small mt-1">
+                                <div class="text-danger small mt-2">
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ form.password1.errors.0 }}
                                 </div>
                             {% endif %}
                         </div>
                         
-                        <div class="form-floating">
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="{{ form.password2.id_for_label }}" 
-                                   name="{{ form.password2.name }}"
-                                   placeholder="Confirm Password"
-                                   required>
-                            <i class="bi bi-lock-fill form-icon"></i>
-                            <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                        <div class="form-group">
+                            <label for="{{ form.password2.id_for_label }}">
+                                <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="{{ form.password2.id_for_label }}" 
+                                       name="{{ form.password2.name }}"
+                                       placeholder="Confirm your password"
+                                       required>
+                                <i class="bi bi-lock-fill form-icon"></i>
+                            </div>
                             {% if form.password2.errors %}
-                                <div class="text-danger small mt-1">
+                                <div class="text-danger small mt-2">
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ form.password2.errors.0 }}
                                 </div>
                             {% endif %}
@@ -495,6 +561,9 @@ document.querySelectorAll('input[name="user_type"]').forEach(radio => {
             card.classList.remove('selected');
         });
         this.closest('.user-type-card').classList.add('selected');
+        
+        // Update the hidden form field
+        document.getElementById('{{ form.user_type.id_for_label }}').value = this.value;
     });
 });
 

@@ -16,13 +16,13 @@ Payment Method: {{ payment.get_payment_method_display }}
 Phone: {{ order.items.first.meal.restaurant.phone }}
 
 🛒 ORDER DETAILS
-{% for item in order.items.all %}{{ item.quantity }}x {{ item.meal.name }} - ${{ item.total }}
+{% for item in order.items.all %}{{ item.quantity }}x {{ item.meal.name }} - KES{{ item.total }}
 {% endfor %}
-Subtotal: ${{ order.total_amount }}
-Delivery Fee: $3.99
-Tax (8%): ${{ tax_amount|floatformat:2 }}
+Subtotal: KES{{ order.total_amount }}
+Delivery Fee: KES3.99
+Tax (8%): KES{{ tax_amount|floatformat:2 }}
 ---
-TOTAL: ${{ total_amount|floatformat:2 }}
+TOTAL: KES{{ total_amount|floatformat:2 }}
 
 🚚 DELIVERY INFORMATION
 Address: {{ order.delivery_address }}
